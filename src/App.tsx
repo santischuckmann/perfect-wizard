@@ -16,6 +16,12 @@ interface Field {
   options: Option[]; // Optional string array for TEXT fields, required for OPTIONS field
   multiple: boolean;
   name: string;
+  description: Description | null;
+}
+
+export interface Description {
+  text: string;
+  position: "ABOVE" | "BELOW"
 }
 
 interface Screen {
@@ -44,6 +50,10 @@ const objeto: MainObject = {
           "placeholder": "John Doe",
           "options": [],
           "multiple": true,
+          "description": {
+            "text": "Indique su nombre como aparece en el DNI",
+            "position": 'ABOVE'
+          }
         },
         {
           "name": "email",
@@ -52,6 +62,10 @@ const objeto: MainObject = {
           "placeholder": "johndoe@gmail.com",
           "options": [],
           "multiple": true,
+          "description": {
+            "text": "Indique su email de google",
+            "position": 'ABOVE'
+          }
         }
       ]
     },
@@ -73,7 +87,8 @@ const objeto: MainObject = {
               "id": "2",
               "description": "1 a 3 de experiencia"
             }
-          ]
+          ],
+          "description": null
         },
         {
           "name": "sex",
@@ -89,8 +104,13 @@ const objeto: MainObject = {
             {
               "id": "hombre",
               "description": "hombrecito"
-            }
-          ]
+            },
+            {
+              "id": "n/a",
+              "description": "no especificado pa"
+            },
+          ],
+          "description": null
         },
       ]
     }
@@ -100,7 +120,6 @@ const objeto: MainObject = {
 const getFieldNameInForm = (name: string, screenIndex: number) => `${screenIndex}-${name}`
 
 const transformFieldsIntoForm = (screens: Screen[]) => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const form: Record<string, string> = {};
   for (let i = 0; i < screens.length; i++){
     for (let j = 0; j < screens[i].fields.length; j++){
@@ -126,7 +145,7 @@ function App() {
       <div className='steps-container'>
         {objeto.count > 0 && objeto.screens.map((screen, index) => {
           return (
-            <div className='step'>
+            <div className='step' data-active={currentScreen === index ? 'true': undefined}>
               <span>
                 Paso {index + 1}
               </span>

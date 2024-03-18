@@ -1,4 +1,5 @@
-import { FormControl, FormControlLabel, FormLabel, MenuItem, Radio, RadioGroup, TextField } from "@mui/material"
+import { FormControl, FormControlLabel, FormLabel, MenuItem, Radio, RadioGroup, TextField, Typography } from "@mui/material"
+import { Description } from "../App";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const FieldType = {
@@ -15,11 +16,11 @@ export type Option = {
 interface ElementProps {
   label: string;
   placeholder: string;
-  //fieldType: typeof FieldType[keyof typeof FieldType];
   fieldType: string;
-  options: Option[]
-  value: string | string[]
-  onChange: (value: string) => void
+  options: Option[];
+  value: string | string[];
+  onChange: (value: string) => void;
+  description: Description | null;
 }
 
 export const Element = ({
@@ -28,41 +29,59 @@ export const Element = ({
   fieldType,
   options,
   value,
-  onChange
+  onChange,
+  description
 }: ElementProps) => {
-
   const handleChange: React.ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement> = (event) => {
     event.stopPropagation()
 
     onChange(event.target.value)
   }
 
-  switch(fieldType){
-    case FieldType.Text:
-      return <TextField value={value} label={label} placeholder={placeholder} fullWidth onChange={handleChange}/>
-    case FieldType.Options:
-      return <TextField value={value} select label={label} placeholder={placeholder} fullWidth onChange={handleChange}>
-        {options.map(option => (
-          <MenuItem key={`${"distinctKey"}-${option.id}`} value={option.id}>
-            {option.description}
-          </MenuItem> 
-        ))}
-      </TextField>
-    case FieldType.Radio:
-      return (
-        <FormControl>
-          <FormLabel id="demo-radio-buttons-group-label">{label}</FormLabel>
-          <RadioGroup
-            aria-labelledby="demo-radio-buttons-group-label"
-            name="radio-buttons-group"
-            value={value}
-            onChange={handleChange}
-          >
-            {options.map(option => (
-              <FormControlLabel value={option.id} control={<Radio />} label={option.description} />
-            ))}
-          </RadioGroup>
-        </FormControl>
-      )
-  }
+  return (
+    <div className="element">
+      {description != null && description.position === "ABOVE" && (
+        <Typography className="description">{description.text}</Typography>
+      )}
+      {(function(){
+        switch(fieldType){
+          case FieldType.Text:
+            return <TextField value={value} label={label} placeholder={placeholder} fullWidth onChange={handleChange}/>
+          case FieldType.Options:
+            return <TextField value={value} select label={label} placeholder={placeholder} fullWidth onChange={handleChange}>
+              {options.map(option => (
+                <MenuItem key={`${"distinctKey"}-${option.id}`} value={option.id}>
+                  {option.description}
+                </MenuItem> 
+              ))}
+            </TextField>
+          case FieldType.Radio:
+            return (
+              <FormControl>
+                <FormLabel id="demo-radio-buttons-group-label">{label}</FormLabel>
+                <RadioGroup
+                  sx={{
+                    flexDirection: "row",
+                    justifyContent: "center"
+                  }}
+                  aria-labelledby="demo-radio-buttons-group-label"
+                  name="radio-buttons-group"
+                  value={value}
+                  onChange={handleChange}
+                >
+                  {options.map(option => (
+                    <FormControlLabel value={option.id} control={<Radio />} label={option.description} />
+                  ))}
+                </RadioGroup>
+              </FormControl>
+            )
+          default:
+            return null;
+        }
+      })()}
+      {description != null && description.position === "BELOW" && (
+        <Typography className="description">{description.text}</Typography>
+      )}
+    </div>
+  )
 }
