@@ -1,20 +1,28 @@
 import { useState } from 'react'
 import { Typography } from '@mui/material'
 import { Element } from './containers/Element'
+import { objeto } from './mocks';
+import { turnBoolIntoString } from './utils';
 
-interface MainObject {
+export interface MainObject {
   color: string;
   title: string;
   count: number;
   screens: Screen[];
 }
 
+export const FieldType = {
+  Text: "TEXT",
+  Options: "OPTIONS",
+  Radio: "RADIO",
+  Multiple: "MULTIPLE"
+} as const
+
 interface Field {
-  fieldType: "TEXT" | "OPTIONS" | "RADIO";
+  fieldType: typeof FieldType[keyof typeof FieldType]
   label: string;
   placeholder: string;
   options: Option[]; // Optional string array for TEXT fields, required for OPTIONS field
-  multiple: boolean;
   name: string;
   description: Description | null;
 }
@@ -34,89 +42,6 @@ interface Option {
   description: string;
 }
 
-
-const objeto: MainObject = {
-  "color": "white",
-  "title": "Clinica Los Santis",
-  "count": 2,
-  "screens": [
-    {
-      "stepName": "Datos personales",
-      "fields": [
-        {
-          "name": "name",
-          "fieldType": "TEXT",
-          "label": "Nombre",
-          "placeholder": "John Doe",
-          "options": [],
-          "multiple": true,
-          "description": {
-            "text": "Indique su nombre como aparece en el DNI",
-            "position": 'ABOVE'
-          }
-        },
-        {
-          "name": "email",
-          "fieldType": "TEXT",
-          "label": "Email",
-          "placeholder": "johndoe@gmail.com",
-          "options": [],
-          "multiple": true,
-          "description": {
-            "text": "Indique su email de google",
-            "position": 'ABOVE'
-          }
-        }
-      ]
-    },
-    {
-      "stepName": "Mas datos",
-      "fields": [
-        {
-          "name": "yearsOfExperience",
-          "fieldType": "OPTIONS",
-          "label": "años de experiencia",
-          "placeholder": "johndoe@gmail.com",
-          "multiple": true,
-          "options": [
-            {
-              "id": "1",
-              "description": "No tengo experiencia"
-            },
-            {
-              "id": "2",
-              "description": "1 a 3 de experiencia"
-            }
-          ],
-          "description": null
-        },
-        {
-          "name": "sex",
-          "fieldType": "RADIO",
-          "label": "genero",
-          "placeholder": "",
-          "multiple": true,
-          "options": [
-            {
-              "id": "mujer",
-              "description": "Mujercita"
-            },
-            {
-              "id": "hombre",
-              "description": "hombrecito"
-            },
-            {
-              "id": "n/a",
-              "description": "no especificado pa"
-            },
-          ],
-          "description": null
-        },
-      ]
-    }
-  ]
-}
-
 const getFieldNameInForm = (name: string, screenIndex: number) => `${screenIndex}-${name}`
 
 const transformFieldsIntoForm = (screens: Screen[]) => {
@@ -132,9 +57,12 @@ const transformFieldsIntoForm = (screens: Screen[]) => {
   return form;
 }
 
+
 function App() {
   const [currentScreen, setCurrentScreen] = useState(0)
   const [ form, setForm ] = useState(transformFieldsIntoForm(objeto.screens));
+
+  console.log(form)
 
   const changeForm = (name: string, value: string) => {
     setForm(prev => ({ ...prev, [name]: value }))
@@ -145,12 +73,9 @@ function App() {
       <div className='steps-container'>
         {objeto.count > 0 && objeto.screens.map((screen, index) => {
           return (
-            <div className='step' data-active={currentScreen === index ? 'true': undefined}>
+            <div className='step' data-active={turnBoolIntoString(currentScreen === index)}>
               <span>
-                Paso {index + 1}
-              </span>
-              <span>
-                {screen.stepName}
+                {screen.stepName ?? `Paso ${index + 1}`}
               </span>
             </div>
           )
@@ -173,6 +98,9 @@ function App() {
       <div className='button-container'>
         <button disabled={currentScreen === 0} onClick={() => setCurrentScreen(prev => prev - 1)}>
           Previous page
+        </button>
+        <button data-visible={currentScreen === objeto.count - 1 ? 'true': 'false'} onClick={() => console.log(form)}>
+          Finish
         </button>
         <button disabled={currentScreen === objeto.count - 1} onClick={() => setCurrentScreen(prev => prev + 1)}>
           Next page

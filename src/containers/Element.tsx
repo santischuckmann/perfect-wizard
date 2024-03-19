@@ -1,13 +1,8 @@
-import { FormControl, FormControlLabel, FormLabel, MenuItem, Radio, RadioGroup, TextField, Typography } from "@mui/material"
-import { Description } from "../App";
+import { Box, Chip, FormControl, FormControlLabel, FormLabel, MenuItem, Radio, RadioGroup, TextField, Typography } from "@mui/material"
+import { Description, FieldType } from "../App";
+import { turnBoolIntoString } from "../utils";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
-const FieldType = {
-  Text: "TEXT",
-  Options: "OPTIONS",
-  Radio: "RADIO"
-} as const
-
 export type Option = {
   id: string;
   description: string;
@@ -18,9 +13,16 @@ interface ElementProps {
   placeholder: string;
   fieldType: string;
   options: Option[];
-  value: string | string[];
+  value: string;
   onChange: (value: string) => void;
   description: Description | null;
+}
+
+const addToValue = (value: string, newMember: string) => {
+  if (value.length === 0)
+    return newMember;
+
+  return value.concat(`;${newMember}`)
 }
 
 export const Element = ({
@@ -36,6 +38,16 @@ export const Element = ({
     event.stopPropagation()
 
     onChange(event.target.value)
+  }
+
+  const handleChangeMultiple = (id: string) => {
+    if (!value.includes(id)){
+      onChange(addToValue(value, id))
+      return
+    }
+
+    const arrayOfValuesFiltered = value.split(';').filter(v => v !== id)
+    onChange(arrayOfValuesFiltered.join(';'))
   }
 
   return (
@@ -70,10 +82,29 @@ export const Element = ({
                   onChange={handleChange}
                 >
                   {options.map(option => (
-                    <FormControlLabel value={option.id} control={<Radio />} label={option.description} />
+                    <FormControlLabel 
+                      key={`${"distinctKey"}-${option.id}`}
+                      value={option.id} 
+                      control={<Radio />} 
+                      label={option.description} />
                   ))}
                 </RadioGroup>
               </FormControl>
+            )
+          case FieldType.Multiple:
+            return (
+              <Box display='flex' gap='16px' alignItems='center'>
+                <FormLabel>{label}</FormLabel>
+                <div className="multiple-container">
+                  {options.map(option => (
+                    <Chip 
+                      key={`${"distinctKey"}-${option.id}`}
+                      label={option.description} 
+                      onClick={() => handleChangeMultiple(option.id)} 
+                      data-active={turnBoolIntoString(value.includes(option.id))}/>
+                  ))}
+                </div>
+              </Box>
             )
           default:
             return null;
