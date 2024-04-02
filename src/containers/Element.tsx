@@ -1,6 +1,6 @@
-import { Box, Chip, FormControl, FormControlLabel, FormLabel, MenuItem, Radio, RadioGroup, TextField, Typography } from "@mui/material"
-import { Description, FieldType } from "../App";
-import { turnBoolIntoString } from "../utils";
+import { Box, Chip, FormControl, FormControlLabel, FormLabel, MenuItem, Radio, RadioGroup, TextField, Typography } from '@mui/material'
+import { boolToString } from '../utils'
+import { Description, FieldType } from '../shared'
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export type Option = {
@@ -20,7 +20,7 @@ interface ElementProps {
 
 const addToValue = (value: string, newMember: string) => {
   if (value.length === 0)
-    return newMember;
+    return newMember
 
   return value.concat(`;${newMember}`)
 }
@@ -52,65 +52,65 @@ export const Element = ({
 
   return (
     <div className="element">
-      {description != null && description.position === "ABOVE" && (
+      {description != null && description.position === 'ABOVE' && (
         <Typography className="description">{description.text}</Typography>
       )}
       {(function(){
         switch(fieldType){
-          case FieldType.Text:
-            return <TextField value={value} label={label} placeholder={placeholder} fullWidth onChange={handleChange}/>
-          case FieldType.Options:
-            return <TextField value={value} select label={label} placeholder={placeholder} fullWidth onChange={handleChange}>
-              {options.map(option => (
-                <MenuItem key={`${"distinctKey"}-${option.id}`} value={option.id}>
-                  {option.description}
-                </MenuItem> 
-              ))}
-            </TextField>
-          case FieldType.Radio:
-            return (
-              <FormControl>
-                <FormLabel id="demo-radio-buttons-group-label">{label}</FormLabel>
-                <RadioGroup
-                  sx={{
-                    flexDirection: "row",
-                    justifyContent: "center"
-                  }}
-                  aria-labelledby="demo-radio-buttons-group-label"
-                  name="radio-buttons-group"
-                  value={value}
-                  onChange={handleChange}
-                >
-                  {options.map(option => (
-                    <FormControlLabel 
-                      key={`${"distinctKey"}-${option.id}`}
-                      value={option.id} 
-                      control={<Radio />} 
-                      label={option.description} />
-                  ))}
-                </RadioGroup>
-              </FormControl>
-            )
-          case FieldType.Multiple:
-            return (
-              <Box display='flex' gap='16px' alignItems='center'>
-                <FormLabel>{label}</FormLabel>
-                <div className="multiple-container">
-                  {options.map(option => (
-                    <Chip 
-                      key={`${"distinctKey"}-${option.id}`}
-                      label={option.description} 
-                      onClick={() => handleChangeMultiple(option.id)} 
-                      data-active={turnBoolIntoString(value.includes(option.id))}/>
-                  ))}
-                </div>
-              </Box>
-            )
-          default:
-            return null;
+        case FieldType.Text:
+          return <TextField value={value} label={label} placeholder={placeholder} fullWidth onChange={handleChange}/>
+        case FieldType.Options:
+          return <TextField value={value} select label={label} placeholder={placeholder} fullWidth onChange={handleChange}>
+            {options.map(option => (
+              <MenuItem key={`${'distinctKey'}-${option.id}`} value={option.id}>
+                {option.description}
+              </MenuItem> 
+            ))}
+          </TextField>
+        case FieldType.Radio:
+          return (
+            <FormControl>
+              <FormLabel id="demo-radio-buttons-group-label">{label}</FormLabel>
+              <RadioGroup
+                sx={{
+                  flexDirection: 'row',
+                  justifyContent: 'center'
+                }}
+                aria-labelledby="demo-radio-buttons-group-label"
+                name="radio-buttons-group"
+                value={value}
+                onChange={handleChange}
+              >
+                {options.map(option => (
+                  <FormControlLabel 
+                    key={`${'distinctKey'}-${option.id}`}
+                    value={option.id} 
+                    control={<Radio />} 
+                    label={option.description} />
+                ))}
+              </RadioGroup>
+            </FormControl>
+          )
+        case FieldType.Multiple:
+          return (
+            <Box display='flex' gap='16px' alignItems='center'>
+              <FormLabel>{label}</FormLabel>
+              <div className="multiple-container">
+                {options.map(option => (
+                  <Chip 
+                    key={`${'distinctKey'}-${option.id}`}
+                    label={option.description} 
+                    onClick={() => handleChangeMultiple(option.id)} 
+                    data-active={boolToString(value.includes(option.id))}/>
+                ))}
+              </div>
+            </Box>
+          )
+        default:
+          return null
         }
       })()}
-      {description != null && description.position === "BELOW" && (
+      {description != null && description.position === 'BELOW' && (
         <Typography className="description">{description.text}</Typography>
       )}
     </div>
