@@ -1,6 +1,7 @@
-import { Box, Chip, FormControl, FormControlLabel, FormLabel, MenuItem, Radio, RadioGroup, TextField, Typography } from '@mui/material'
+import { Box, Chip, FormControl, FormControlLabel, FormLabel, MenuItem, Radio, RadioGroup, TextField } from '@mui/material'
 import { boolToString } from '../utils'
 import { Description, FieldType } from '../shared'
+import { Field } from '../components/Field'
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export type Option = {
@@ -51,10 +52,7 @@ export const Element = ({
   }
 
   return (
-    <div className="element">
-      {description != null && description.position === 'ABOVE' && (
-        <Typography className="description">{description.text}</Typography>
-      )}
+    <Field className="element" description={description}>
       {(function(){
         switch(fieldType){
         case FieldType.Text:
@@ -110,9 +108,6 @@ export const Element = ({
           return null
         }
       })()}
-      {description != null && description.position === 'BELOW' && (
-        <Typography className="description">{description.text}</Typography>
-      )}
-    </div>
+    </Field>
   )
 }

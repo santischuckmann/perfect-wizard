@@ -5,7 +5,7 @@ import { Wizard } from '../../containers/Wizard'
 
 export const WizardView = () => {
   const params = useParams()
-  const wizard = useDataFetching<WizardType>(`wizard/${params.wizardId}`)
+  const wizard = useDataFetching<WizardType>(`client/${params.wizardId}`)
 
   if (wizard.data == null)
     return null
