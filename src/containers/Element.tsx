@@ -3,7 +3,6 @@ import { boolToString } from '../utils'
 import { Description, FieldType } from '../shared'
 import { Field } from '../components/Field'
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
 export type Option = {
   id: string;
   description: string;

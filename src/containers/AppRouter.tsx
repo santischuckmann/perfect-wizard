@@ -1,6 +1,7 @@
 import { RouterProvider, createBrowserRouter } from 'react-router-dom'
 import { WizardView } from '../views/client/WizardView'
 import { Layout } from './Layout'
+import { Login } from '../views/dashboard/Login'
 
 const router = createBrowserRouter([
   {
@@ -10,7 +11,11 @@ const router = createBrowserRouter([
         path: '/:wizardId',
         element: <WizardView />
       },
-    ]
+      {
+        path: 'login',
+        element: <Login />
+      }
+    ],
   },
 ])
 

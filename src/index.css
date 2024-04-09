@@ -90,3 +90,41 @@
 .multiple-container [data-active="true"] {
   background-color: chocolate;
 }
+
+.login-container {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  padding: 8px;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 16px;
+  background-image: linear-gradient(black, black), url('https://c0.wallpaperflare.com/preview/389/615/630/business-businessman-communication-concept.jpg');
+  background-size: cover;
+  background-position: center;
+  background-blend-mode: saturation;
+}
+
+.login-box {
+  width: 200px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: azure;
+  padding: 8px 0px;
+}
+
+.login-box form {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  flex-direction: column;
+  gap: 16px;
+}
+
+form input {
+  padding: 4px;
+  border-radius: 5px;
+}

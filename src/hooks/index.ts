@@ -1,22 +1,27 @@
 import { useCallback, useEffect, useState } from 'react'
 import { request } from '../libraries/axios-lib'
 
+export const OperationStatus = {
+  Idle: 'IDLE',
+  Loading: 'LOADING',
+  Error: 'ERROR',
+  Success: 'SUCCESS'
+} as const
+
 export const useDataFetching = <T>(baseEndpoint: string, onDemand = false) => {
   const [ data, setData ] = useState<T | null>(null)
-  const [ loading, setLoading ] = useState<boolean>(false)
-  const [ error, setError ] = useState<boolean>(false)
+  const [ status, setStatus ] = useState<typeof OperationStatus[keyof typeof OperationStatus]>(OperationStatus.Idle)
 
   const fetchData = useCallback(async (endpoint = '') => {
-    setLoading(true)
-    setError(false)
+    setStatus(OperationStatus.Loading)
 
     try {
       const response = await request({ method: 'GET', endpoint: baseEndpoint + endpoint })
       setData(response)
+      setStatus(OperationStatus.Success)
     } catch (err) {
-      setError(true)
+      setStatus(OperationStatus.Error)
     }
-    setLoading(false)
   }, [])
 
   useEffect(() => {
@@ -24,28 +29,25 @@ export const useDataFetching = <T>(baseEndpoint: string, onDemand = false) => {
       fetchData()
   }, [ fetchData ])
 
-  return { data, loading, error, fetch: fetchData }
+  return { data, status, fetch: fetchData }
 }
+
 
 export const useMutate = <T>() => {
   const [ data, setData ] = useState<T | null>(null)
-  const [ loading, setLoading ] = useState<boolean>(false)
-  const [ error, setError ] = useState<boolean>(false)
+  const [ status, setStatus ] = useState<typeof OperationStatus[keyof typeof OperationStatus]>(OperationStatus.Idle)
 
   const mutate = useCallback(async ({ endpoint, data, method } : { endpoint: string, data: Record<string, unknown> | undefined, method: 'POST' | 'PUT'}) => {
-    setLoading(true)
-    setError(false)
+    setStatus(OperationStatus.Loading)
 
     try {
       const response = await request({ method, endpoint, data })
       setData(response)
+      setStatus(OperationStatus.Success)
     } catch (err) {
-      console.log('err')
-      setError(true)
-    } finally {
-      setLoading(false)
+      setStatus(OperationStatus.Error)
     }
   }, [])
 
-  return { mutate, data, loading, error }
+  return { mutate, data, status }
 }

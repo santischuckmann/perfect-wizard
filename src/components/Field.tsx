@@ -7,7 +7,6 @@ interface FieldProps extends ComponentPropsWithRef<'div'> {
   children: React.ReactNode;
 }
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
 export const Field = ({
   description,
   children,
