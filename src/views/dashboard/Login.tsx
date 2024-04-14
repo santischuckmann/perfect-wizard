@@ -1,26 +1,26 @@
 import React, { useState } from 'react'
 import { OperationStatus, useMutate } from '../../hooks'
+import { useNavigate } from 'react-router-dom'
 
 export const Login = () => {
+  const navigate = useNavigate()
   const [ identifier, setIdentifier ] = useState('')
   const [ password, setPassword ] = useState('')
-  const [ statusText, setStatusText ] = useState('')
   const login = useMutate<{ token: string }>()
 
   const handleSubmit: React.FormEventHandler<HTMLFormElement> = async (event) => {
     event.preventDefault()
 
     await login.mutate({
-      endpoint: 'login',
+      endpoint: 'user/login',
       data: { identifier, password },
       method: 'POST'
     })
 
-    if (login.status === OperationStatus.Error)
-      setStatusText('Ocurrio un error al ingresar el usuario')
-
-    if (login.data?.token)
+    if (login.status == OperationStatus.Success && login.data?.token){
       localStorage.setItem('token', login.data.token)
+      navigate('/admin')
+    }
   }
 
   return (
@@ -48,7 +48,7 @@ export const Login = () => {
         </form>
       </div>
       <a href="/register.html">No tenes cuenta? crea una aca</a>
-      {statusText && <p id="stateText">{statusText}</p>}
+      {login.status === OperationStatus.Error && <p id="stateText">{'Ocurrio un error al ingresar el usuario'}</p>}
     </div>
   )
 }

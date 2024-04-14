@@ -2,6 +2,7 @@ import { RouterProvider, createBrowserRouter } from 'react-router-dom'
 import { WizardView } from '../views/client/WizardView'
 import { Layout } from './Layout'
 import { Login } from '../views/dashboard/Login'
+import { TenantSelection } from '../views/dashboard/TenantSelection'
 
 const router = createBrowserRouter([
   {
@@ -14,6 +15,10 @@ const router = createBrowserRouter([
       {
         path: 'login',
         element: <Login />
+      },
+      {
+        path: 'admin',
+        element: <TenantSelection />
       }
     ],
   },

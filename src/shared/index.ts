@@ -35,3 +35,8 @@ interface Option {
   id: string;
   description: string;
 }
+
+export interface Tenant {
+  tenantId: string 
+  name: string
+}
