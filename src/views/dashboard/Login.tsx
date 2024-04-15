@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { OperationStatus, useMutate } from '../../hooks'
+import { useMutate } from '../../hooks'
 import { useNavigate } from 'react-router-dom'
 
 export const Login = () => {
@@ -17,7 +17,7 @@ export const Login = () => {
       method: 'POST'
     })
 
-    if (login.status == OperationStatus.Success && login.data?.token){
+    if (login.status == 'SUCCESS' && login.data?.token){
       localStorage.setItem('token', login.data.token)
       navigate('/admin')
     }
@@ -48,7 +48,7 @@ export const Login = () => {
         </form>
       </div>
       <a href="/register.html">No tenes cuenta? crea una aca</a>
-      {login.status === OperationStatus.Error && <p id="stateText">{'Ocurrio un error al ingresar el usuario'}</p>}
+      {login.status === 'ERROR' && <p id="stateText">{'Ocurrio un error al ingresar el usuario'}</p>}
     </div>
   )
 }
