@@ -13,7 +13,7 @@ export const FieldType = {
 } as const
   
   interface Field {
-    fieldType: typeof FieldType[keyof typeof FieldType]
+    type: typeof FieldType[keyof typeof FieldType]
     label: string;
     placeholder: string;
     options: Option[]; // Optional string array for TEXT fields, required for OPTIONS field

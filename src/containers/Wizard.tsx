@@ -1,8 +1,19 @@
 import { useState } from 'react'
 import { Screen, Wizard as WizardType } from '../shared'
 import { Element } from './Element'
-import { Typography } from '@mui/material'
+import { Button, ThemeProvider, Typography, createTheme } from '@mui/material'
 import { boolToString, key } from '../utils'
+
+const { palette } = createTheme()
+const { augmentColor } = palette
+const createColor = (mainColor: string) => augmentColor({ color: { main: mainColor } })
+
+const theme = createTheme({
+  palette: {
+    primary: createColor('#eee'),
+    secondary: createColor('#29345b')
+  },
+})
 
 const getFieldNameInForm = (name: string, screenIndex: number) => `${screenIndex}-${name}`
 
@@ -36,47 +47,58 @@ export const Wizard = ({
   }
 
   return (
-    <div className='screen-container'>
-      <div className='steps-container'>
-        {screenCount > 0 && wizard.screens.map((screen, index) => {
-          return (
-            <div 
-              key={key()} 
-              className='step' 
-              data-active={boolToString(currentScreen === index)}>
-              <span>
-                {screen.stepName ?? `Paso ${index + 1}`}
-              </span>
-            </div>
-          )
-        })}
-      </div>
-      <Typography>{wizard.title}</Typography>
-      <div className='screen-fields-container'>
-        {screenCount > 0 && wizard.screens[currentScreen].fields.map((field) => {
-          const fieldName = getFieldNameInForm(field.name, currentScreen)
-          return (
-            <Element
-              key={key()} 
-              {...field}
-              options={field.options}
-              value={form[fieldName]}
-              onChange={(value: string) => changeForm(fieldName, value)}
-            />
-          )
-        })}
-      </div>
-      <div className='button-container'>
-        <button disabled={currentScreen === 0} onClick={() => setCurrentScreen(prev => prev - 1)}>
+    <ThemeProvider theme={theme}>
+      <div className='screen-container'>
+        <div className='steps-container'>
+          {screenCount > 0 && wizard.screens.map((screen, index) => {
+            return (
+              <div 
+                key={key()} 
+                className='step' 
+                data-active={boolToString(currentScreen === index)}>
+                <span>
+                  {screen.stepName ?? `Paso ${index + 1}`}
+                </span>
+              </div>
+            )
+          })}
+        </div>
+        <Typography>{wizard.title}</Typography>
+        <div className='screen-fields-container'>
+          {screenCount > 0 && wizard.screens[currentScreen].fields.map((field) => {
+            const fieldName = getFieldNameInForm(field.name, currentScreen)
+            return (
+              <Element
+                key={fieldName} 
+                {...field}
+                options={field.options}
+                value={form[fieldName]}
+                onChange={(value: string) => changeForm(fieldName, value)}
+              />
+            )
+          })}
+        </div>
+        <div className='button-container'>
+          <Button 
+            variant='outlined' 
+            disabled={currentScreen === 0} 
+            onClick={() => setCurrentScreen(prev => prev - 1)}>
           Previous page
-        </button>
-        <button data-visible={boolToString(currentScreen === screenCount - 1)} onClick={() => console.log(form)}>
+          </Button>
+          <Button 
+            variant='outlined' 
+            data-visible={boolToString(currentScreen === screenCount - 1)} 
+            onClick={() => console.log(form)}>
           Finish
-        </button>
-        <button disabled={currentScreen === screenCount - 1} onClick={() => setCurrentScreen(prev => prev + 1)}>
+          </Button>
+          <Button 
+            variant='outlined' 
+            disabled={currentScreen === screenCount - 1} 
+            onClick={() => setCurrentScreen(prev => prev + 1)}>
           Next page
-        </button>
+          </Button>
+        </div>
       </div>
-    </div>
+    </ThemeProvider>
   )
 }

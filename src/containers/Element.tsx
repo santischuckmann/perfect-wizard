@@ -11,7 +11,7 @@ export type Option = {
 interface ElementProps {
   label: string;
   placeholder: string;
-  fieldType: string;
+  type: string;
   options: Option[];
   value: string;
   onChange: (value: string) => void;
@@ -28,7 +28,7 @@ const addToValue = (value: string, newMember: string) => {
 export const Element = ({
   label,
   placeholder,
-  fieldType,
+  type: fieldType,
   options,
   value,
   onChange,
@@ -55,9 +55,20 @@ export const Element = ({
       {(function(){
         switch(fieldType){
         case FieldType.Text:
-          return <TextField value={value} label={label} placeholder={placeholder} fullWidth onChange={handleChange}/>
+          return <TextField 
+            value={value} 
+            label={label} 
+            placeholder={placeholder} 
+            fullWidth 
+            onChange={handleChange}/>
         case FieldType.Options:
-          return <TextField value={value} select label={label} placeholder={placeholder} fullWidth onChange={handleChange}>
+          return <TextField 
+            value={value} 
+            select 
+            label={label} 
+            placeholder={placeholder} 
+            fullWidth 
+            onChange={handleChange}>
             {options.map(option => (
               <MenuItem key={`${'distinctKey'}-${option.id}`} value={option.id}>
                 {option.description}
