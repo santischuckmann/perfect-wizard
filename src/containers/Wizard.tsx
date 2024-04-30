@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import { Screen, Wizard as WizardType } from '../shared'
 import { Element } from './Element'
-import { Button, ThemeProvider, Typography, createTheme } from '@mui/material'
+import { Button } from '../components/Button'
+import { ThemeProvider, Typography, createTheme } from '@mui/material'
 import { boolToString, key } from '../utils'
 
 const { palette } = createTheme()
@@ -10,8 +11,8 @@ const createColor = (mainColor: string) => augmentColor({ color: { main: mainCol
 
 const theme = createTheme({
   palette: {
-    primary: createColor('#eee'),
-    secondary: createColor('#29345b')
+    primary: createColor('#333'),
+    secondary: createColor('#888'),
   },
 })
 
@@ -56,14 +57,14 @@ export const Wizard = ({
                 key={key()} 
                 className='step' 
                 data-active={boolToString(currentScreen === index)}>
-                <span>
+                <span onClick={() => setCurrentScreen(index)}>
                   {screen.stepName ?? `Paso ${index + 1}`}
                 </span>
               </div>
             )
           })}
         </div>
-        <Typography>{wizard.title}</Typography>
+        <Typography variant='h3'>{wizard.title}</Typography>
         <div className='screen-fields-container'>
           {screenCount > 0 && wizard.screens[currentScreen].fields.map((field) => {
             const fieldName = getFieldNameInForm(field.name, currentScreen)
@@ -80,22 +81,25 @@ export const Wizard = ({
         </div>
         <div className='button-container'>
           <Button 
+            sx={{ fontSize: '1.8rem' }}
             variant='outlined' 
             disabled={currentScreen === 0} 
             onClick={() => setCurrentScreen(prev => prev - 1)}>
-          Previous page
+            <Typography sx={{ fontSize: '1.5rem' }}>Previous Page</Typography>
           </Button>
           <Button 
+            sx={{ fontSize: '1.8rem' }}
             variant='outlined' 
             data-visible={boolToString(currentScreen === screenCount - 1)} 
             onClick={() => console.log(form)}>
-          Finish
+            <Typography sx={{ fontSize: '1.5rem' }}>Finish</Typography>
           </Button>
           <Button 
+            sx={{ fontSize: '1.8rem' }}
             variant='outlined' 
             disabled={currentScreen === screenCount - 1} 
             onClick={() => setCurrentScreen(prev => prev + 1)}>
-          Next page
+            <Typography sx={{ fontSize: '1.5rem' }}>Next Page</Typography>
           </Button>
         </div>
       </div>

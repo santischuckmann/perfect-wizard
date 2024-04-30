@@ -1,5 +1,5 @@
-import { Box, Chip, FormControl, FormControlLabel, FormLabel, MenuItem, Radio, RadioGroup, TextField } from '@mui/material'
-import { boolToString } from '../utils'
+import { Box, Chip, FormControl, FormControlLabel, FormLabel, MenuItem, Radio, RadioGroup, TextField, Typography } from '@mui/material'
+import { boolToString, key } from '../utils'
 import { Description, FieldType } from '../shared'
 import { Field } from '../components/Field'
 
@@ -50,27 +50,39 @@ export const Element = ({
     onChange(arrayOfValuesFiltered.join(';'))
   }
 
+  const identifier = label + key()
+
   return (
-    <Field className="element" description={description}>
+    <Field 
+      className="element" 
+      description={description}
+      label={
+        <Typography component='label' sx={{ fontSize: '2rem' }} htmlFor={identifier}>{label}</Typography>
+      }>
       {(function(){
         switch(fieldType){
         case FieldType.Text:
           return <TextField 
+            inputProps={{ style: { fontSize: '1.8rem' } }}
+            id={identifier}
             value={value} 
-            label={label} 
             placeholder={placeholder} 
             fullWidth 
             onChange={handleChange}/>
         case FieldType.Options:
           return <TextField 
+            SelectProps={{
+              sx: {
+                fontSize: '1.8rem'
+              }
+            }}
             value={value} 
             select 
-            label={label} 
             placeholder={placeholder} 
             fullWidth 
             onChange={handleChange}>
             {options.map(option => (
-              <MenuItem key={`${'distinctKey'}-${option.id}`} value={option.id}>
+              <MenuItem sx={{ fontSize: '1.8rem' }} key={`${'distinctKey'}-${option.id}`} value={option.id}>
                 {option.description}
               </MenuItem> 
             ))}
