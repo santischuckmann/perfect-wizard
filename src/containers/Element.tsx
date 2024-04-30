@@ -74,6 +74,13 @@ export const Element = ({
             SelectProps={{
               sx: {
                 fontSize: '1.8rem'
+              },
+              MenuProps: {
+                PaperProps: {
+                  sx: {
+                    backgroundColor: 'transparent'
+                  }
+                }
               }
             }}
             value={value} 
@@ -81,8 +88,17 @@ export const Element = ({
             placeholder={placeholder} 
             fullWidth 
             onChange={handleChange}>
-            {options.map(option => (
-              <MenuItem sx={{ fontSize: '1.8rem' }} key={`${'distinctKey'}-${option.id}`} value={option.id}>
+            {options.map((option, index) => (
+              <MenuItem 
+                sx={{ 
+                  fontSize: '1.8rem',
+                  '&[data-last-item="false"]': {
+                    borderBottom: '1px solid black'
+                  }
+                }} 
+                data-last-item={index === options.length - 1}
+                key={`${'distinctKey'}-${option.id}`} 
+                value={option.id}>
                 {option.description}
               </MenuItem> 
             ))}

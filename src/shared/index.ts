@@ -1,4 +1,5 @@
 export interface Wizard {
+    wizardId: string;
     color: string;
     title: string;
     count: number;
@@ -13,12 +14,14 @@ export const FieldType = {
 } as const
   
   interface Field {
+    fieldId: string
     type: typeof FieldType[keyof typeof FieldType]
     label: string;
     placeholder: string;
     options: Option[]; // Optional string array for TEXT fields, required for OPTIONS field
     name: string;
     description: Description | null;
+    isIdentifier: boolean
   }
   
 export interface Description {

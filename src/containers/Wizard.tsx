@@ -2,19 +2,9 @@ import { useState } from 'react'
 import { Screen, Wizard as WizardType } from '../shared'
 import { Element } from './Element'
 import { Button } from '../components/Button'
-import { ThemeProvider, Typography, createTheme } from '@mui/material'
+import { Typography } from '@mui/material'
 import { boolToString, key } from '../utils'
-
-const { palette } = createTheme()
-const { augmentColor } = palette
-const createColor = (mainColor: string) => augmentColor({ color: { main: mainColor } })
-
-const theme = createTheme({
-  palette: {
-    primary: createColor('#333'),
-    secondary: createColor('#888'),
-  },
-})
+import { useIncremental, useMutate } from '../hooks'
 
 const getFieldNameInForm = (name: string, screenIndex: number) => `${screenIndex}-${name}`
 
@@ -31,6 +21,40 @@ const transformFieldsIntoForm = (screens: Screen[]) => {
   return form
 }
 
+type SendWizardBody = Record<string, unknown> & {
+  wizardId: string
+  identifier: string[]
+  responseFields: {
+    fieldId: string
+    values: string[]
+  }[]
+}
+
+const prepareForm = (wizard: WizardType, form: Record<string, string>) => {
+  const response: SendWizardBody = {
+    wizardId: wizard.wizardId,
+    identifier: [],
+    responseFields: [] 
+  }
+
+  for (let i = 0; i < wizard.screens.length; i++){
+    for (let j = 0; j < wizard.screens[i].fields.length; j++){
+      const currentField = wizard.screens[i].fields[j]
+      const nameInForm = getFieldNameInForm(currentField.name, i)
+
+      if (currentField.isIdentifier)
+        response.identifier.push(form[nameInForm])
+
+      response.responseFields.push({
+        fieldId: currentField.fieldId,
+        values: form[nameInForm].split(';')
+      })
+    }
+  }
+
+  return response
+}
+
 interface WizardProps {
   wizard: WizardType
 }
@@ -38,8 +62,9 @@ interface WizardProps {
 export const Wizard = ({
   wizard
 }: WizardProps) => {
-  const [ currentScreen, setCurrentScreen ] = useState(0)
+  const currentScreen = useIncremental(0)
   const [ form, setForm ] = useState(transformFieldsIntoForm(wizard.screens))
+  const sendWizard = useMutate()
 
   const screenCount = wizard.screens.length
 
@@ -47,62 +72,91 @@ export const Wizard = ({
     setForm(prev => ({ ...prev, [name]: value }))
   }
 
-  return (
-    <ThemeProvider theme={theme}>
+  const handleSendWizard = async () => {
+    await sendWizard.mutate({
+      endpoint: '/client',
+      data: prepareForm(wizard, form),
+      method: 'POST'
+    })
+  }
+
+  if (sendWizard.status === 'SUCCESS'){
+    return (
       <div className='screen-container'>
-        <div className='steps-container'>
-          {screenCount > 0 && wizard.screens.map((screen, index) => {
-            return (
-              <div 
-                key={key()} 
-                className='step' 
-                data-active={boolToString(currentScreen === index)}>
-                <span onClick={() => setCurrentScreen(index)}>
-                  {screen.stepName ?? `Paso ${index + 1}`}
-                </span>
-              </div>
-            )
-          })}
-        </div>
-        <Typography variant='h3'>{wizard.title}</Typography>
-        <div className='screen-fields-container'>
-          {screenCount > 0 && wizard.screens[currentScreen].fields.map((field) => {
-            const fieldName = getFieldNameInForm(field.name, currentScreen)
-            return (
-              <Element
-                key={fieldName} 
-                {...field}
-                options={field.options}
-                value={form[fieldName]}
-                onChange={(value: string) => changeForm(fieldName, value)}
-              />
-            )
-          })}
-        </div>
-        <div className='button-container'>
-          <Button 
-            sx={{ fontSize: '1.8rem' }}
-            variant='outlined' 
-            disabled={currentScreen === 0} 
-            onClick={() => setCurrentScreen(prev => prev - 1)}>
-            <Typography sx={{ fontSize: '1.5rem' }}>Previous Page</Typography>
-          </Button>
-          <Button 
-            sx={{ fontSize: '1.8rem' }}
-            variant='outlined' 
-            data-visible={boolToString(currentScreen === screenCount - 1)} 
-            onClick={() => console.log(form)}>
-            <Typography sx={{ fontSize: '1.5rem' }}>Finish</Typography>
-          </Button>
-          <Button 
-            sx={{ fontSize: '1.8rem' }}
-            variant='outlined' 
-            disabled={currentScreen === screenCount - 1} 
-            onClick={() => setCurrentScreen(prev => prev + 1)}>
-            <Typography sx={{ fontSize: '1.5rem' }}>Next Page</Typography>
-          </Button>
-        </div>
+        <Typography variant='h3'>
+        The wizard has been completed succesfully! 
+        Thanks for using Perfect Wizard.
+        </Typography>
       </div>
-    </ThemeProvider>
+    )
+  }
+
+  if (sendWizard.status === 'LOADING'){
+    return (
+      <div className='screen-container'>
+        <Typography variant='h3'>
+          Seeing if you made any mistake...
+        </Typography>
+      </div>
+    )
+  }
+
+  console.log(sendWizard.status)
+
+  return (
+    <div className='screen-container'>
+      <div className='steps-container'>
+        {screenCount > 0 && wizard.screens.map((screen, index) => {
+          return (
+            <div 
+              key={key()} 
+              className='step' 
+              data-active={boolToString(currentScreen.value === index)}>
+              <span onClick={() => currentScreen.set(index)}>
+                {screen.stepName ?? `Paso ${index + 1}`}
+              </span>
+            </div>
+          )
+        })}
+      </div>
+      <Typography variant='h3'>{wizard.title}</Typography>
+      <div className='screen-fields-container'>
+        {screenCount > 0 && wizard.screens[currentScreen.value].fields.map((field) => {
+          const fieldName = getFieldNameInForm(field.name, currentScreen.value)
+          return (
+            <Element
+              key={fieldName} 
+              {...field}
+              options={field.options}
+              value={form[fieldName]}
+              onChange={(value: string) => changeForm(fieldName, value)}
+            />
+          )
+        })}
+      </div>
+      <div className='button-container'>
+        <Button 
+          sx={{ fontSize: '1.8rem' }}
+          variant='outlined' 
+          disabled={currentScreen.value === 0} 
+          onClick={() => currentScreen.decrease()}>
+          <Typography sx={{ fontSize: '1.5rem' }}>Previous Page</Typography>
+        </Button>
+        <Button 
+          sx={{ fontSize: '1.8rem' }}
+          variant='outlined' 
+          data-visible={boolToString(currentScreen.value === screenCount - 1)} 
+          onClick={handleSendWizard}>
+          <Typography sx={{ fontSize: '1.5rem' }}>Finish</Typography>
+        </Button>
+        <Button 
+          sx={{ fontSize: '1.8rem' }}
+          variant='outlined' 
+          disabled={currentScreen.value === screenCount - 1} 
+          onClick={() => currentScreen.increase()}>
+          <Typography sx={{ fontSize: '1.5rem' }}>Next Page</Typography>
+        </Button>
+      </div>
+    </div>
   )
 }

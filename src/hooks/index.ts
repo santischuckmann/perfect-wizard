@@ -8,6 +8,17 @@ export const OperationStatus = {
   Success: 'SUCCESS'
 } as const
 
+export const useIncremental = (initialNumber: number) => {
+  const [ state, setState ] = useState<number>(initialNumber)
+
+  return {
+    increase: () => setState(x => x + 1),
+    decrease: () => setState(x => x - 1),
+    set: (value: number) => setState(value),
+    value: state
+  }
+}
+
 export const useDataFetching = <T>(baseEndpoint: string, onDemand = false) => {
   const [ data, setData ] = useState<T | null>(null)
   const [ status, setStatus ] = useState<typeof OperationStatus[keyof typeof OperationStatus]>(OperationStatus.Idle)
@@ -49,5 +60,5 @@ export const useMutate = <T>() => {
     }
   }, [])
 
-  return { mutate, data, status }
+  return { mutate, data, status, resetStatus: () => setStatus('IDLE') }
 }
