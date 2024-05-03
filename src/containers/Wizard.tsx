@@ -5,6 +5,7 @@ import { Button } from '../components/Button'
 import { Typography } from '@mui/material'
 import { boolToString, key } from '../utils'
 import { useIncremental, useMutate } from '../hooks'
+import { WizardWrapper } from './WizardWrapper'
 
 const getFieldNameInForm = (name: string, screenIndex: number) => `${screenIndex}-${name}`
 
@@ -80,31 +81,8 @@ export const Wizard = ({
     })
   }
 
-  if (sendWizard.status === 'SUCCESS'){
-    return (
-      <div className='screen-container'>
-        <Typography variant='h3'>
-        The wizard has been completed succesfully! 
-        Thanks for using Perfect Wizard.
-        </Typography>
-      </div>
-    )
-  }
-
-  if (sendWizard.status === 'LOADING'){
-    return (
-      <div className='screen-container'>
-        <Typography variant='h3'>
-          Seeing if you made any mistake...
-        </Typography>
-      </div>
-    )
-  }
-
-  console.log(sendWizard.status)
-
   return (
-    <div className='screen-container'>
+    <WizardWrapper status={sendWizard.status}>
       <div className='steps-container'>
         {screenCount > 0 && wizard.screens.map((screen, index) => {
           return (
@@ -157,6 +135,6 @@ export const Wizard = ({
           <Typography sx={{ fontSize: '1.5rem' }}>Next Page</Typography>
         </Button>
       </div>
-    </div>
+    </WizardWrapper>
   )
 }
