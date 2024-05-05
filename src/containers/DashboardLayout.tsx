@@ -1,8 +1,10 @@
-import { Box, CssBaseline, AppBar, Toolbar, Typography, Drawer, Divider, Link, Chip, Avatar, styled } from '@mui/material'
+import { Box, CssBaseline, AppBar, Toolbar, Typography, Drawer, Divider, Link, Chip, Avatar, styled, Modal } from '@mui/material'
 import { Outlet, useParams } from 'react-router-dom'
 import { useDataFetching } from '../hooks'
 import { Tenant, User } from '../shared'
 import { key } from '../utils'
+import { ModalBox } from '../components/ModalBox'
+import { useState } from 'react'
 
 const drawerWidth = 200
 
@@ -25,6 +27,7 @@ export const DashboardLayout = () => {
   const tenants = useDataFetching<Tenant[]>('tenant')
   const tenant = useDataFetching<Tenant>(`tenant/${params.tenantId}`)
   const user = useDataFetching<User>('user')
+  const [ openModal, setOpenModal ] = useState(false)
 
   const handleCreateTenant = () => console.log('holissss')
 
@@ -105,11 +108,12 @@ export const DashboardLayout = () => {
             width: '100%' 
           }}>
             <Chip
+              onClick={() => setOpenModal(true)}
               sx={{
                 width: '70%',
                 borderRadius: '5%'
               }}
-              avatar={<Avatar alt="Natacha">{user.data?.username[0]}</Avatar>}
+              avatar={<Avatar alt={user.data?.name}>{user.data?.username[0]}</Avatar>}
               label={user.data?.username}
               variant="outlined"
             />
@@ -122,6 +126,15 @@ export const DashboardLayout = () => {
       >
         <Outlet />
       </Box>
+      <Modal open={openModal} onClose={() => setOpenModal(false)}>
+        <ModalBox sx={{ width: '50%', backgroundColor: 'white', borderRadius: '0.125rem' }}>
+          <Typography sx={{ textAlign: 'center' }}>{user.data?.username}</Typography>
+          <Typography>Email: {user.data?.email}</Typography>
+          <Typography>Name: {user.data?.name}</Typography>
+          <Typography>Surname: {user.data?.surname}</Typography>
+          <Typography></Typography>
+        </ModalBox>
+      </Modal>
     </Box>
   )
 }
