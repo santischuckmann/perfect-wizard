@@ -44,6 +44,13 @@ export interface Tenant {
   name: string
 }
 
+export interface User {
+  name: string
+  username: string
+  surname: string
+  email: string
+}
+
 export interface MinifiedWizardDto {
   wizardId: string;
   color: string;
