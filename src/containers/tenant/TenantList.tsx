@@ -8,7 +8,7 @@ interface TenantListProps {
 export const TenantList = ({ tenants }: TenantListProps ) => {
   const navigate = useNavigate()
   const handleSelectTenant = (tenantId: string) => {
-    navigate(`/admin/${tenantId}`)
+    navigate(`/admin/${tenantId}/wizards`)
   }
 
   return (

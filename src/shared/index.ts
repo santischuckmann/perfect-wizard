@@ -43,3 +43,16 @@ export interface Tenant {
   tenantId: string 
   name: string
 }
+
+export interface MinifiedWizardDto {
+  wizardId: string;
+  color: string;
+  title: string;
+  tenantId: string;
+  screens: MinifiedScreenDto[];
+}
+
+interface MinifiedScreenDto {
+  stepName: string;
+  fieldCount: number;
+}

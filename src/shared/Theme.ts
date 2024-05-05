@@ -9,4 +9,7 @@ export const theme = createTheme({
     primary: createColor('#333'),
     secondary: createColor('#777'),
   },
+  typography: {
+    fontSize: 20, // Set your desired font size here
+  },
 })

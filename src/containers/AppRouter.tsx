@@ -3,6 +3,8 @@ import { WizardView } from '../views/client/WizardView'
 import { Layout } from './Layout'
 import { Login } from '../views/dashboard/Login'
 import { TenantSelection } from '../views/dashboard/TenantSelection'
+import { Wizards } from '../views/dashboard/Wizards'
+import { DashboardLayout } from './DashboardLayout'
 
 const router = createBrowserRouter([
   {
@@ -19,6 +21,16 @@ const router = createBrowserRouter([
       {
         path: 'admin',
         element: <TenantSelection />
+      },
+      {
+        path: 'admin/:tenantId',
+        element: <DashboardLayout />,
+        children: [
+          {
+            path: 'wizards',
+            element: <Wizards />
+          }
+        ]
       }
     ],
   },

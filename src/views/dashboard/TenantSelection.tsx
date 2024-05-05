@@ -2,6 +2,7 @@ import { useDataFetching } from '../../hooks'
 import { CreateTenant } from '../../containers/tenant/CreateTenant'
 import { TenantList } from '../../containers/tenant/TenantList'
 import { Tenant } from '../../shared'
+import { Box } from '@mui/material'
 
 
 export const TenantSelection = () => {
@@ -11,7 +12,7 @@ export const TenantSelection = () => {
     return <div>There was an error loading this page</div>
 
   return (
-    <div>
+    <Box className='login-container'>
       <h1>Tenants</h1>
       {tenants.data?.length === 0 && (
         <CreateTenant />
@@ -19,6 +20,6 @@ export const TenantSelection = () => {
       {tenants.data !== null && (tenants.data?.length ?? 0) > 0 && (
         <TenantList tenants={tenants.data} />
       )}
-    </div>
+    </Box>
   )
 }

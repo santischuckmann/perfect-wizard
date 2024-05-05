@@ -17,7 +17,8 @@ export const Login = () => {
       method: 'POST'
     })
 
-    if (login.status == 'SUCCESS' && login.data?.token){
+    if (login.status === 'SUCCESS' && login.data?.token){
+      console.log('has been successful')
       localStorage.setItem('token', login.data.token)
       navigate('/admin')
     }
